@@ -30,3 +30,27 @@ END
 
 CLOSE sensorList
 DEALLOCATE sensorList
+
+
+Set @MinValue  = 100
+Set @MaxValue  = 400
+
+DECLARE sensorList CURSOR FOR
+	Select Id from dbo.Sensor where dbo.Sensor.SensorType = 'Trinksensor'
+OPEN sensorList
+
+FETCH NEXT FROM sensorList INTO @SensorId
+WHILE @@FETCH_STATUS = 0
+BEGIN
+	EXECUTE @RC = [dbo].[spCreateMeasuredValues] 
+	@SensorId
+	,@DateTimeStart
+	,@DateTimeEnd
+	,@MinValue
+	,@MaxValue
+
+	FETCH NEXT FROM sensorList INTO @SensorId
+END
+
+CLOSE sensorList
+DEALLOCATE sensorList
